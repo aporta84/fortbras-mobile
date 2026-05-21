@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1d4ed8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fortbras PMO">
+  <title>Fortbras PMO</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      /* Cor primária: azul do dashboard */
+      --primary:#1d4ed8;--primary-dark:#1e3a8a;--primary-light:#EFF6FF;
+      /* Semântico: vermelho só para erros/riscos/badges */
+      --red:#C8102E;--red-dark:#9E0B23;--red-bg:#FFF1F3;
+      --dark:#1A1A2E;--dark2:#16213E;
+      --bg:#F4F5F7;--surface:#fff;
+      --border:#E4E7EC;--border2:#F2F4F7;
+      --text:#101828;--text2:#475467;--text3:#98A2B3;
+      --green:#12B76A;--amber:#F79009;--blue:#2E90FA;--purple:#7F56D9;
+      --green-bg:#ECFDF3;--amber-bg:#FFFAEB;--blue-bg:#EFF8FF;
+      --nav:68px;--hdr:56px;
+      --r:14px;--rs:8px;
+      --sh:0 1px 3px rgba(16,24,40,.1),0 1px 2px rgba(16,24,40,.06);
+      --sh-md:0 4px 8px -2px rgba(16,24,40,.1),0 2px 4px -2px rgba(16,24,40,.06);
+    }
+    html,body{height:100%;width:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;-webkit-text-size-adjust:none}
+    ::-webkit-scrollbar{display:none}*{scrollbar-width:none}
+
+    /* SPLASH */
+    #splash{position:fixed;inset:0;z-index:999;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .4s}
+    .splash-logo{display:flex;flex-direction:column;align-items:center;gap:14px}
+    .splash-mark{width:180px}
+    .splash-sub{font-size:11px;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase}
+    .splash-badge{background:var(--primary-light);border:1px solid rgba(29,78,216,.3);color:var(--primary);font-size:12px;padding:6px 18px;border-radius:99px}
+    .spin{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* LOGIN */
+    #login{position:fixed;inset:0;z-index:100;background:#f0f2f5;display:none;align-items:center;justify-content:center;padding:24px}
+    .login-box{width:100%;max-width:380px;background:#fff;border-radius:16px;padding:36px 32px 28px;box-shadow:0 4px 24px rgba(0,0,0,.10)}
+    .login-head{text-align:center;margin-bottom:20px}
+    .login-logo{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px}
+    .login-logo svg{height:36px;width:auto}
+    .login-title{font-size:20px;font-weight:700;color:#1a1a2e;margin-bottom:4px}
+    .login-subtitle{font-size:14px;color:#2563EB;font-weight:600;margin-bottom:6px}
+    .login-desc{font-size:13px;color:#6b7280}
+    .l-err{background:#FFF1F3;color:#C01048;border-radius:var(--rs);padding:9px 12px;font-size:12px;margin-bottom:12px;display:none;border:1px solid #fecdd3}
+    .l-group{margin-bottom:16px}
+    .l-group label{font-size:13px;font-weight:500;color:#374151;display:block;margin-bottom:6px}
+    .l-group input{width:100%;padding:12px 14px;border:1px solid #D1D5DB;border-radius:8px;font-size:15px;color:#111827;background:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
+    .l-group input::placeholder{color:#9CA3AF}
+    .l-group input:focus{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+    .l-btn{width:100%;padding:14px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;transition:background .15s,transform .1s;-webkit-tap-highlight-color:transparent;letter-spacing:.2px}
+    .l-btn:hover{background:#1e40af}
+    .l-btn:active{transform:scale(.98);background:#1e3a8a}
+    .l-btn.busy{opacity:.6;pointer-events:none}
+    .l-foot{text-align:center;margin-top:18px;font-size:12px;color:#9CA3AF}
+
+    /* APP */
+    #app{height:100%;display:flex;flex-direction:column;display:none}
+
+    /* HEADER */
+    .hdr{height:auto;background:#fff;display:flex;align-items:center;padding:10px 14px;gap:10px;flex-shrink:0;z-index:10;border-bottom:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+    .hdr-logo{height:28px;width:auto;flex-shrink:0}
+    .hdr-info{flex:1;min-width:0}.hdr-title{font-size:14px;font-weight:700;color:var(--text);line-height:1.2}.hdr-proj{font-size:11px;color:var(--text3);margin-top:1px;line-height:1.3}
+    .hdr-week{background:var(--primary-light);color:var(--primary);font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;flex-shrink:0}
+    .hdr-sep{width:1px;height:32px;background:var(--border);flex-shrink:0}.hdr-badge-atencao{display:inline-flex;align-items:center;gap:4px;background:#FEFCE8;border:1px solid #FDE047;color:#854D0E;font-size:10px;font-weight:600;padding:4px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0}.hdr-badge-atencao::before{content:"";width:6px;height:6px;border-radius:50%;background:#EAB308;flex-shrink:0}
+
+    /* SCREENS */
+    .screens{flex:1;overflow:hidden;position:relative}
+    .scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:14px 14px calc(var(--nav) + 14px);display:none;-webkit-overflow-scrolling:touch}
+    .scr.on{display:block}
+
+    /* NAV */
+    .nav{height:var(--nav);background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:stretch;padding-bottom:env(safe-area-inset-bottom);flex-shrink:0;position:relative;z-index:10}
+    .ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--text3);transition:color .2s;-webkit-tap-highlight-color:transparent;padding:6px 2px}
+    .ni.on{color:var(--primary)}
+    .ni svg{width:21px;height:21px}
+    .ni span{font-size:9.5px;font-weight:500}
+    .nav-line{position:absolute;top:0;left:0;height:2px;background:var(--primary);border-radius:0 0 2px 2px;transition:left .25s cubic-bezier(.4,0,.2,1),width .25s cubic-bezier(.4,0,.2,1)}
+
+    /* CARDS */
+    .card{background:var(--surface);border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-bottom:10px}
+    .card-hdr{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+
+    /* DASH HEADER */
+    .dash-hdr{margin-bottom:14px}
+    .dash-title{font-size:20px;font-weight:700;color:var(--text);line-height:1.2}
+    .dash-sub{font-size:12px;color:var(--text3);margin-top:3px}
+    .dash-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+    .badge-atencao{display:inline-flex;align-items:center;gap:5px;background:#FEFCE8;border:1px solid #FDE047;color:#854D0E;font-size:11px;font-weight:600;padding:5px 10px;border-radius:99px;white-space:nowrap;flex-shrink:0}
+    .badge-atencao::before{content:'';width:7px;height:7px;border-radius:50%;background:#EAB308;flex-shrink:0}
+
+    /* METRIC CARDS */
+    .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+    .mc{background:var(--surface);border-radius:var(--r);padding:14px 12px;box-shadow:var(--sh);border-top:3px solid transparent;position:relative}
+    .mc-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+    .mc-val{font-size:30px;font-weight:800;line-height:1;margin-bottom:4px}
+    .mc-sub{font-size:11px;color:var(--text3)}
+    .mc-icon{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:8px;background:#DCFCE7;display:flex;align-items:center;justify-content:center}
+    .mc-icon svg{width:16px;height:16px}
+    /* border colors */
+    .mc-gray{border-top-color:#9CA3AF}.mc-gray .mc-val{color:#374151}
+    .mc-blue{border-top-color:#1d4ed8}.mc-blue .mc-val{color:#1d4ed8}
+    .mc-green{border-top-color:#16a34a}.mc-green .mc-val{color:#16a34a}
+    .mc-muted{border-top-color:#9CA3AF}.mc-muted .mc-val{color:#9CA3AF}
+    .mc-red{border-top-color:#DC2626}.mc-red .mc-val{color:#DC2626}
+    /* variação full-width */
+    .mc-wide{grid-column:1/-1}
+
+    /* PROGRESS */
+    .pbar{height:6px;background:var(--border2);border-radius:99px;overflow:hidden;margin-top:5px}
+    .pfill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+    /* PREVISTO x REALIZADO */
+    .frente-card{background:var(--surface);border-radius:var(--r);padding:14px;box-shadow:var(--sh);margin-bottom:8px}
+    .frente-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+    .frente-name{font-size:13px;font-weight:700;color:var(--text)}
+    .frente-resp{font-size:10px;color:var(--text3);margin-top:2px}
+    .frente-delta{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;flex-shrink:0}
+    .delta-pos{background:#DCFCE7;color:#15803D}
+    .delta-neg{background:#FEF3C7;color:#92400E}
+    .delta-ok{background:#DCFCE7;color:#15803D}
+    .frente-bars{display:flex;flex-direction:column;gap:6px}
+    .bar-row{display:flex;align-items:center;gap:8px}
+    .bar-lbl{font-size:10px;font-weight:600;color:var(--text3);width:58px;flex-shrink:0;text-transform:uppercase;letter-spacing:.3px}
+    .bar-track{flex:1;height:8px;background:var(--border2);border-radius:99px;overflow:hidden;position:relative}
+    .bar-fill{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+    .bar-pct{font-size:11px;font-weight:700;width:32px;text-align:right;flex-shrink:0}
+    /* Previsto: azul claro tracejado via gradiente */
+    .bar-prev{background:repeating-linear-gradient(90deg,#93C5FD 0px,#93C5FD 6px,#BFDBFE 6px,#BFDBFE 10px)}
+    /* Realizado: sólido */
+    .bar-real-green{background:#16A34A}
+    .bar-real-red{background:#DC2626}
+    .bar-real-blue{background:#1d4ed8}
+    .pct-green{color:#15803D}
+    .pct-amber{color:#B45309}
+    .pct-red{color:#B91C1C}
+    .pct-blue{color:#1d4ed8}
+    .pct-gray{color:#6B7280}
+
+    /* LIST */
+    .li{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--border2)}
+    .li:last-child{border-bottom:none;padding-bottom:0}
+    .li:first-child{padding-top:0}
+    .li-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .li-ico svg{width:17px;height:17px}
+    .li-body{flex:1;min-width:0}
+    .li-name{font-size:13px;font-weight:600;line-height:1.3}
+    .li-sub{font-size:11px;color:var(--text3);margin-top:1px}
+    .li-resp{font-size:10px;color:var(--text2);margin-top:2px}
+
+    /* BADGES */
+    .b{font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;flex-shrink:0;white-space:nowrap}
+    .bg{background:var(--green-bg);color:#027A48}
+    .br{background:var(--red-bg);color:#C01048}
+    .ba{background:var(--amber-bg);color:#B54708}
+    .bb{background:var(--blue-bg);color:#175CD3}
+    .bgr{background:#F9F5FF;color:#6941C6}
+
+    /* SECTION */
+    .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .sh h2{font-size:15px;font-weight:700}
+    .sh a{font-size:12px;color:var(--primary);font-weight:600;text-decoration:none}
+
+    /* AVANÇO CARD */
+    .av-card{background:var(--surface);border-radius:var(--r);padding:15px;box-shadow:var(--sh);margin-bottom:10px}
+    .av-marco{font-size:13px;color:var(--text2);line-height:1.5;padding-top:2px}
+    .av-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .av-name{font-size:14px;font-weight:700}
+    .av-resp{font-size:11px;color:var(--text3);margin-top:1px}
+    .av-sub{font-size:12px;color:var(--text2);margin-bottom:8px}
+    .task{padding:9px 0;border-bottom:1px solid var(--border2)}
+    .task:last-child{border-bottom:none;padding-bottom:0}
+    .task:first-child{padding-top:0}
+    .task-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .task-name{font-size:12px;font-weight:500;flex:1;line-height:1.3}
+    .task-date{font-size:10px;color:var(--text3);margin-top:2px}
+
+    /* RISCO */
+    .risk-card{background:var(--surface);border-radius:var(--r);padding:15px;box-shadow:var(--sh);margin-bottom:10px;border-left:3px solid transparent}
+    .risk-card.alto{border-left-color:#F04438}
+    .risk-card.medio{border-left-color:var(--amber)}
+    .risk-card.baixo{border-left-color:var(--blue)}
+    .risk-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+    .risk-frente{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+    .risk-title{font-size:14px;font-weight:700;line-height:1.3}
+    .risk-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px}
+    .risk-acao{background:var(--bg);border-radius:var(--rs);padding:8px 10px;font-size:11px;color:var(--text2)}
+    .risk-acao strong{color:var(--text);font-weight:600}
+    .risk-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border2)}
+    .risk-resp{font-size:11px;color:var(--text3)}
+    .rag{display:flex;gap:3px}
+    .rd{width:9px;height:9px;border-radius:50%}
+    .rd-r{background:#F04438}
+    .rd-a{background:var(--amber)}
+    .rd-g{background:var(--green)}
+    .rd-off{background:var(--border)}
+
+    /* TIMELINE */
+    .tl-week{margin-bottom:14px}
+    .tl-week-hdr{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+    .tl-week-hdr::after{content:'';flex:1;height:1px;background:var(--border)}
+    .tl-item{background:var(--surface);border-radius:var(--rs);padding:11px 12px;margin-bottom:6px;box-shadow:var(--sh);display:flex;align-items:center;gap:10px}
+    .tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .tl-body{flex:1;min-width:0}
+    .tl-name{font-size:12px;font-weight:600}
+    .tl-meta{font-size:11px;color:var(--text3);margin-top:1px}
+    .tl-date{font-size:10px;color:var(--text3);flex-shrink:0}
+
+    /* ARQUIVOS */
+    .upload-zone{border:1.5px dashed var(--border);border-radius:var(--r);padding:22px;text-align:center;background:var(--surface);cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent}
+    .upload-zone svg{width:28px;height:28px;color:var(--text3);margin-bottom:8px}
+    .upload-zone p{font-size:13px;font-weight:500;color:var(--text2)}
+    .upload-zone small{font-size:11px;color:var(--text3)}
+    .f-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface);border-radius:var(--rs);margin-bottom:6px;box-shadow:var(--sh)}
+    .f-ico{width:34px;height:34px;background:var(--green-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .f-ico svg{width:17px;height:17px;color:var(--green)}
+    .f-name{font-size:12px;font-weight:600;flex:1}
+    .f-date{font-size:10px;color:var(--text3)}
+    .f-btn{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 9px;font-size:10px;font-weight:700;color:var(--text2);cursor:pointer}
+
+    /* EQUIPE */
+    .u-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border2)}
+    .u-row:last-child{border-bottom:none;padding-bottom:0}
+    .u-row:first-child{padding-top:0}
+    .u-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+    .u-name{flex:1;font-size:13px;font-weight:600}
+    .u-area{font-size:10px;color:var(--text3)}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:calc(var(--nav) + 10px);left:50%;transform:translateX(-50%) translateY(12px);background:var(--dark);color:#fff;padding:9px 16px;border-radius:99px;font-size:12px;font-weight:500;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
+    .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* CHIP */
+    .chip{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:4px 10px;font-size:11px;font-weight:500;color:var(--text2)}
+  </style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">
+    <!-- Logo Fortbras — marca vetorial + texto branco para fundo escuro -->
+    <img src="logo.png" alt="Fortbras" style="height:46px;width:auto;display:block">
+    <div class="splash-sub">PMO · GESTÃO DE PROJETOS</div>
+    <div class="splash-badge">Plano de Conversão Menil</div>
+  </div>
+  <div class="spin"></div>
+</div>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-box">
+    <div class="login-head">
+      <!-- Logo Fortbras -->
+      <div class="login-logo">
+        <img src="logo.png" alt="Fortbras" style="height:50px;width:auto;display:block;margin:0 auto">
+      </div>
+      <div class="login-title">Dashboard Executivo</div>
+      <div class="login-subtitle">Plano de Conversão Menil</div>
+      <div class="login-desc">Identifique-se para acessar o painel</div>
+    </div>
+    <div class="l-err" id="l-err">Usuário ou senha incorretos.</div>
+    <div class="l-group">
+      <label>Usuário</label>
+      <input type="text" id="u" placeholder="Digite seu usuário" autocomplete="username" autocapitalize="none">
+    </div>
+    <div class="l-group">
+      <label>Senha</label>
+      <input type="password" id="p" placeholder="Digite sua senha" autocomplete="current-password">
+    </div>
+    <button class="l-btn" id="lbtn" onclick="login()">Entrar no Dashboard</button>
+    <div class="l-foot">Acesso restrito · Fortbras © 2026</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header class="hdr">
+    <img src="logo.png" alt="Fortbras" class="hdr-logo">
+    <div class="hdr-sep"></div>
+    <div class="hdr-info">
+      <div class="hdr-title">Dashboard Executivo</div>
+      <div class="hdr-proj">Plano de Conversão Menil</div>
+    </div>
+    <div class="hdr-badge-atencao">Em Atenção</div>
+  </header>
+
+  <div class="screens">
+
+    <!-- DASHBOARD -->
+    <div class="scr on" id="s-dash">
+
+
+      <div class="metric-grid">
+        <div class="mc mc-gray">
+          <div class="mc-label">Planejado</div>
+          <div class="mc-val">40%</div>
+          <div class="mc-sub">Meta S14</div>
+        </div>
+        <div class="mc mc-blue">
+          <div class="mc-label">Realizado</div>
+          <div class="mc-val">41%</div>
+          <div class="mc-sub">Progresso Geral</div>
+        </div>
+        <div class="mc mc-green">
+          <div class="mc-label">Variação</div>
+          <div class="mc-val">+1%</div>
+          <div class="mc-sub">Acima do Plano</div>
+        </div>
+        <div class="mc mc-muted">
+          <div class="mc-label">A Concluir</div>
+          <div class="mc-val">59%</div>
+          <div class="mc-sub">Restante</div>
+        </div>
+        <div class="mc mc-red mc-wide">
+          <div class="mc-label">Riscos</div>
+          <div class="mc-val">4</div>
+          <div class="mc-sub">Riscos Ativos</div>
+        </div>
+      </div>
+
+      <!-- Legenda -->
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;padding:0 2px">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px">Progresso por Frente</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
+          <div style="display:flex;align-items:center;gap:4px"><span style="width:18px;height:6px;border-radius:3px;background:repeating-linear-gradient(90deg,#93C5FD 0,#93C5FD 5px,#BFDBFE 5px,#BFDBFE 9px);display:inline-block"></span><span style="font-size:10px;color:var(--text3)">Previsto</span></div>
+          <div style="display:flex;align-items:center;gap:4px"><span style="width:18px;height:6px;border-radius:3px;background:#16A34A;display:inline-block"></span><span style="font-size:10px;color:var(--text3)">Realizado</span></div>
+        </div>
+      </div>
+
+      <!-- Desenvolvimentos — Atrasado (-5%) -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div>
+            <div class="frente-name">Desenvolvimentos</div>
+                      </div>
+          <span class="frente-delta delta-neg">▼ −5%</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:57%"></div></div>
+            <span class="bar-pct pct-blue">57%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:52%"></div></div>
+            <span class="bar-pct pct-green">52%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plataforma de Vendas — Adiantado (+11%) -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div>
+            <div class="frente-name">Plataforma de Vendas</div>
+                      </div>
+          <span class="frente-delta delta-pos">▲ +11%</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:27%"></div></div>
+            <span class="bar-pct pct-blue">27%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:38%"></div></div>
+            <span class="bar-pct pct-green">38%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Infraestrutura — Em dia -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div>
+            <div class="frente-name">Infraestrutura</div>
+                      </div>
+          <span class="frente-delta delta-ok">Em Dia</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:57%"></div></div>
+            <span class="bar-pct pct-blue">57%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:57%"></div></div>
+            <span class="bar-pct pct-green">57%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Perfil de Acesso — Em dia -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div>
+            <div class="frente-name">Perfil de Acesso</div>
+                      </div>
+          <span class="frente-delta delta-ok">Em Dia</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:59%"></div></div>
+            <span class="bar-pct pct-blue">59%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:59%"></div></div>
+            <span class="bar-pct pct-green">59%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Migração de Dados ERP — Em dia -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div>
+            <div class="frente-name">Migração de Dados ERP</div>
+                      </div>
+          <span class="frente-delta delta-ok">Em Dia</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:57%"></div></div>
+            <span class="bar-pct pct-blue">57%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:57%"></div></div>
+            <span class="bar-pct pct-green">57%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parametrização — Em dia -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div>
+            <div class="frente-name">Parametrização</div>
+                      </div>
+          <span class="frente-delta delta-ok">Em Dia</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:88%"></div></div>
+            <span class="bar-pct pct-blue">88%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:88%"></div></div>
+            <span class="bar-pct pct-green">88%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mapeamento GAPs — Concluído -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div>
+            <div class="frente-name">Mapeamento GAPs</div>
+                      </div>
+          <span class="frente-delta delta-concluido">Concluído</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:100%"></div></div>
+            <span class="bar-pct pct-blue">100%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:100%"></div></div>
+            <span class="bar-pct pct-green">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BI — Em dia -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div>
+            <div class="frente-name">BI</div>
+                      </div>
+          <span class="frente-delta delta-ok">Em Dia</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:33%"></div></div>
+            <span class="bar-pct pct-blue">33%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:33%"></div></div>
+            <span class="bar-pct pct-green">33%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gestão de Mudança — Em dia -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div>
+            <div class="frente-name">Gestão de Mudança</div>
+                      </div>
+          <span class="frente-delta delta-ok">Em Dia</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:31%"></div></div>
+            <span class="bar-pct pct-blue">31%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:31%"></div></div>
+            <span class="bar-pct pct-green">31%</span>
+          </div>
+        </div>
+      </div>
+
+    
+
+      <!-- Testes Integrados — Não Iniciado -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div><div class="frente-name">Testes Integrados</div></div>
+          <span class="frente-delta" style="background:#F1F5F9;color:#64748B">Não Iniciado</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:0%"></div></div>
+            <span class="bar-pct pct-blue">0%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:0%"></div></div>
+            <span class="bar-pct pct-green">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conversão — Não Iniciado -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div><div class="frente-name">Conversão</div></div>
+          <span class="frente-delta" style="background:#F1F5F9;color:#64748B">Não Iniciado</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:0%"></div></div>
+            <span class="bar-pct pct-blue">0%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:0%"></div></div>
+            <span class="bar-pct pct-green">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Torre de Controle — Não Iniciado -->
+      <div class="frente-card">
+        <div class="frente-top">
+          <div><div class="frente-name">Torre de Controle</div></div>
+          <span class="frente-delta" style="background:#F1F5F9;color:#64748B">Não Iniciado</span>
+        </div>
+        <div class="frente-bars">
+          <div class="bar-row">
+            <span class="bar-lbl">Previsto</span>
+            <div class="bar-track"><div class="bar-fill bar-prev" style="width:0%"></div></div>
+            <span class="bar-pct pct-blue">0%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">Realizado</span>
+            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:0%"></div></div>
+            <span class="bar-pct pct-green">0%</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- AVANÇOS -->
+    <div class="scr" id="s-avancos">
+      <div class="sh" style="margin-bottom:14px"><h2>Avanços do Projeto</h2></div>
+
+      <div class="av-card">
+        <div class="av-hdr">
+          <div><div class="av-name">Desenvolvimentos</div></div>
+          <span class="b ba">Em Andamento</span>
+        </div>
+        <div class="pbar" style="height:7px;margin-bottom:12px"><div class="pfill" style="width:52%;background:var(--green)"></div></div>
+        <div class="av-marco">Atos: 11 de 17 desenvolvimentos concluído</div>
+      </div>
+
+      <div class="av-card">
+        <div class="av-hdr">
+          <div><div class="av-name">Gestão de Mudança</div></div>
+          <span class="b bg">Concluído</span>
+        </div>
+        <div class="pbar" style="height:7px;margin-bottom:12px"><div class="pfill" style="width:100%;background:var(--green)"></div></div>
+        <div class="av-marco">Apresentação da DEMO - Nova Plataforma de Treinamento Digital</div>
+      </div>
+
+      <div class="av-card">
+        <div class="av-hdr">
+          <div><div class="av-name">Migração de Dados ERP</div></div>
+          <span class="b bg">Concluído</span>
+        </div>
+        <div class="pbar" style="height:7px;margin-bottom:12px"><div class="pfill" style="width:100%;background:var(--green)"></div></div>
+        <div class="av-marco">Cargas ambiente Automação 30/30</div>
+      </div>
+
+      <div class="av-card">
+        <div class="av-hdr">
+          <div><div class="av-name">Perfil de Acesso</div></div>
+          <span class="b bg">Concluído</span>
+        </div>
+        <div class="pbar" style="height:7px;margin-bottom:12px"><div class="pfill" style="width:100%;background:var(--green)"></div></div>
+        <div class="av-marco">Filiais das 2 primeiras viradas cadastradas em produção</div>
+      </div>
+    </div>
+
+    <!-- RISCOS -->
+    <div class="scr" id="s-riscos">
+      <div class="sh" style="margin-bottom:14px"><h2>Riscos & Atenção</h2><span class="b br">4 ativos</span></div>
+
+      <div class="risk-card alto">
+        <div class="risk-top">
+          <div>
+            <div class="risk-frente">Desenvolvimentos</div>
+            <div class="risk-title">Atrasos no Sprint 01</div>
+          </div>
+          <span class="b br">ALTO</span>
+        </div>
+        <div class="risk-desc">Atos: 6 desenvolvimentos em atraso. ETA para finalização será compartilhado em 18/5.<br>Tecnosolve: Sprint01 com 6 Gaps em correção com ETA de homologação em 18/05.</div>
+      </div>
+
+      <div class="risk-card medio">
+        <div class="risk-top">
+          <div>
+            <div class="risk-frente">Migração de Dados</div>
+            <div class="risk-title">Cadastros Duplicados — Produtos / EAN</div>
+          </div>
+          <span class="b ba">MÉDIO</span>
+        </div>
+        <div class="risk-desc">Saneamento de cadastros duplicados: Produtos | EAN. Base Menil tem duplicidades gerando complexidade na avaliação do status do produto.</div>
+      </div>
+
+      <div class="risk-card medio">
+        <div class="risk-top">
+          <div>
+            <div class="risk-frente">Infraestrutura</div>
+            <div class="risk-title">Preparação Nova Plataforma de Vendas</div>
+          </div>
+          <span class="b ba">MÉDIO</span>
+        </div>
+        <div class="risk-desc">Infraestrutura para receber a nova plataforma de vendas.</div>
+      </div>
+
+      <div class="risk-card baixo">
+        <div class="risk-top">
+          <div>
+            <div class="risk-frente">Gestão de Mudanças</div>
+            <div class="risk-title">Prazo Material de Treinamento</div>
+          </div>
+          <span class="b bb">BAIXO</span>
+        </div>
+        <div class="risk-desc">Prazos curtos para construção dos novos materiais de treinamento: Tela de Vendas · Caixa · CRM Salesforce.</div>
+      </div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-line" id="nline"></div>
+    <button class="ni on" id="n-dash" onclick="go('dash')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      <span>Dashboard</span>
+    </button>
+    <button class="ni" id="n-avancos" onclick="go('avancos')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+      <span>Avanços</span>
+    </button>
+    <button class="ni" id="n-riscos" onclick="go('riscos')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      <span>Riscos</span>
+    </button>
+  </nav>
+</div>
+
+<div class="toast" id="tst"></div>
+
+<script>
+const API = 'https://fortbras-api.onrender.com';
+let cur = 'dash';
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const s = document.getElementById('splash');
+    s.style.opacity = '0';
+    setTimeout(() => {
+      s.style.display = 'none';
+      const saved = sessionStorage.getItem('fb_u');
+      if (saved) boot(saved);
+      else { document.getElementById('login').style.display = 'flex'; }
+    }, 400);
+  }, 1600);
+});
+
+async function login() {
+  const u = document.getElementById('u').value.trim();
+  const p = document.getElementById('p').value;
+  if (!u || !p) { err('Preencha usuário e senha.'); return; }
+  const btn = document.getElementById('lbtn');
+  btn.classList.add('busy'); btn.textContent = 'Entrando...';
+  document.getElementById('l-err').style.display = 'none';
+
+  try {
+    const fd = new FormData(); fd.append('username', u); fd.append('password', p);
+    const r = await fetch(`${API}/login`, { method:'POST', body:fd, credentials:'include', mode:'cors' });
+    if (r.ok || r.redirected || r.status === 302) { ok(u); return; }
+  } catch(e) { /* CORS/offline → demo */ }
+
+  // Demo: admin ou visualizador com senha >= 3 chars
+  if ((u.toLowerCase() === 'admin' || u.toLowerCase().startsWith('visual')) && p.length >= 3) { ok(u); }
+  else { btn.classList.remove('busy'); btn.textContent = 'Entrar no Dashboard'; err('Usuário ou senha incorretos.'); }
+}
+
+function err(m) { const e = document.getElementById('l-err'); e.textContent = m; e.style.display = 'block'; }
+function ok(u) { sessionStorage.setItem('fb_u', u); document.getElementById('login').style.display = 'none'; boot(u); }
+
+function boot(u) {
+  document.getElementById('app').style.display = 'flex';
+  
+  go('dash');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+const screens = ['dash','avancos','riscos'];
+
+function go(s) {
+  screens.forEach(x => {
+    document.getElementById(`s-${x}`).classList.toggle('on', x === s);
+    document.getElementById(`n-${x}`).classList.toggle('on', x === s);
+  });
+  cur = s;
+  const nav = document.querySelector('.nav');
+  const idx = screens.indexOf(s);
+  const w = nav.offsetWidth / screens.length;
+  const line = document.getElementById('nline');
+  line.style.left = (idx * w) + 'px';
+  line.style.width = w + 'px';
+  document.getElementById(`s-${s}`).scrollTop = 0;
+}
+
+function toast(m) {
+  const t = document.getElementById('tst');
+  t.textContent = m; t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2400);
+}
+
+// Refresh live data every 5 min
+setInterval(async () => {
+  try { await fetch(API, { credentials:'include', mode:'cors' }); } catch(e) {}
+}, 300000);
+</script>
+</body>
+</html>
