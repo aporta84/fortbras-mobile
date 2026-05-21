@@ -730,14 +730,24 @@ async function login() {
   document.getElementById('l-err').style.display = 'none';
 
   try {
-    const fd = new FormData(); fd.append('username', u); fd.append('password', p);
-    const r = await fetch(`${API}/login`, { method:'POST', body:fd, credentials:'include', mode:'cors' });
-    if (r.ok || r.redirected || r.status === 302) { ok(u); return; }
-  } catch(e) { /* CORS/offline → demo */ }
-
-  // Demo: admin ou visualizador com senha >= 3 chars
-  if ((u.toLowerCase() === 'admin' || u.toLowerCase().startsWith('visual')) && p.length >= 3) { ok(u); }
-  else { btn.classList.remove('busy'); btn.textContent = 'Entrar no Dashboard'; err('Usuário ou senha incorretos.'); }
+    const r = await fetch(`${API}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u.toLowerCase(), password: p }),
+      mode: 'cors'
+    });
+    const data = await r.json();
+    if (r.ok && data.accessToken) {
+      sessionStorage.setItem('fb_token', data.accessToken);
+      ok(data.user?.username || u);
+      return;
+    }
+    btn.classList.remove('busy'); btn.textContent = 'Entrar no Dashboard';
+    err(data.error || 'Usuário ou senha incorretos.');
+  } catch(e) {
+    btn.classList.remove('busy'); btn.textContent = 'Entrar no Dashboard';
+    err('Não foi possível conectar ao servidor. Tente novamente.');
+  }
 }
 
 function err(m) { const e = document.getElementById('l-err'); e.textContent = m; e.style.display = 'block'; }
