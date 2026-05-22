@@ -419,22 +419,75 @@ async function login() {
 function err(m) { const e = document.getElementById('l-err'); e.textContent = m; e.style.display = 'block'; }
 function ok(u) { sessionStorage.setItem('fb_u', u); document.getElementById('login').style.display = 'none'; boot(u); }
 
+function forceLogin() {
+  sessionStorage.removeItem('fb_u');
+  sessionStorage.removeItem('fb_token');
+  document.getElementById('app').style.display   = 'none';
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('u').value = '';
+  document.getElementById('p').value = '';
+  const btn = document.getElementById('lbtn');
+  btn.classList.remove('busy'); btn.textContent = 'Entrar no Dashboard';
+}
+
+function setMetricLoading() {
+  ['m-plan-val','m-real-val','m-var-val','m-conc-val','m-risk-val'].forEach(id => {
+    document.getElementById(id).textContent = '···';
+  });
+  document.getElementById('m-plan-sub').textContent = 'Aguarde...';
+  document.getElementById('m-var-sub').textContent  = '—';
+}
+
+function setMetricEmpty() {
+  ['m-plan-val','m-real-val','m-var-val','m-conc-val','m-risk-val'].forEach(id => {
+    document.getElementById(id).textContent = '—';
+  });
+  document.getElementById('m-plan-sub').textContent = 'Sem dados';
+  document.getElementById('m-var-sub').textContent  = '—';
+  const emptyMsg = `<div style="text-align:center;padding:32px 16px;color:var(--text3);font-size:13px">
+    Nenhum dado disponível.<br>Faça upload da planilha no painel web.
+    <br><br><button onclick="loadDashboardData()" style="margin-top:8px;padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:var(--surface);font-size:13px;cursor:pointer">↻ Tentar novamente</button>
+  </div>`;
+  document.getElementById('frente-list').innerHTML = emptyMsg;
+  document.getElementById('av-list').innerHTML     = emptyMsg;
+  document.getElementById('risk-list').innerHTML   = emptyMsg;
+  document.getElementById('risk-count').textContent = '0 ativos';
+}
+
 function boot(u) {
   document.getElementById('app').style.display = 'flex';
   go('dash');
+  // Se não há token salvo (sessão sem login completo), forçar login
+  if (!sessionStorage.getItem('fb_token')) { forceLogin(); return; }
   loadDashboardData();
 }
 
 async function loadDashboardData() {
   const token = sessionStorage.getItem('fb_token');
-  if (!token) return;
+  if (!token) { forceLogin(); return; }
+
+  setMetricLoading();
+
   try {
     const r = await fetch(`${API}/api/data/current`, {
       headers: { 'Authorization': 'Bearer ' + token }, mode: 'cors'
     });
-    if (!r.ok) return;
+
+    // Token expirado ou inválido → forçar novo login
+    if (r.status === 401 || r.status === 403) { forceLogin(); return; }
+
+    if (!r.ok) {
+      setMetricEmpty();
+      toast('Erro ao buscar dados (' + r.status + ')');
+      return;
+    }
+
     const d = await r.json();
-    if (d.empty) return;
+
+    if (d.empty) {
+      setMetricEmpty();
+      return;
+    }
 
     // --- Métricas ---
     const plan = Math.round(d.planejado || 0);
@@ -451,18 +504,18 @@ async function loadDashboardData() {
     document.getElementById('m-risk-val').textContent = risks;
 
     // --- Frentes (áreas) ---
+    const fl = document.getElementById('frente-list');
     if (d.areas && d.areas.length) {
-      const fl = document.getElementById('frente-list');
       fl.innerHTML = d.areas.map(a => {
-        const realp   = Math.round(a.realizado || 0);
-        const prev    = Math.round((a.realizado || 0) - (a.desvio || 0));
-        const delta   = Math.round(a.desvio || 0);
+        const realp = Math.round(a.realizado || 0);
+        const prev  = Math.round((a.realizado || 0) - (a.desvio || 0));
+        const delta = Math.round(a.desvio || 0);
         let badgeCls, badgeTxt;
-        if (realp >= 100)        { badgeCls = 'delta-concluido'; badgeTxt = 'Concluído'; }
-        else if (delta > 0)      { badgeCls = 'delta-pos';       badgeTxt = '▲ +' + delta + '%'; }
-        else if (delta < 0)      { badgeCls = 'delta-neg';       badgeTxt = '▼ ' + delta + '%'; }
-        else if (realp === 0)    { badgeCls = '';                 badgeTxt = 'Não Iniciado'; }
-        else                     { badgeCls = 'delta-ok';        badgeTxt = 'Em Dia'; }
+        if (realp >= 100)     { badgeCls = 'delta-concluido'; badgeTxt = 'Concluído'; }
+        else if (delta > 0)   { badgeCls = 'delta-pos';       badgeTxt = '▲ +' + delta + '%'; }
+        else if (delta < 0)   { badgeCls = 'delta-neg';       badgeTxt = '▼ ' + delta + '%'; }
+        else if (realp === 0) { badgeCls = '';                 badgeTxt = 'Não Iniciado'; }
+        else                  { badgeCls = 'delta-ok';         badgeTxt = 'Em Dia'; }
         return `<div class="frente-card">
   <div class="frente-top">
     <div><div class="frente-name">${a.nome}</div></div>
@@ -471,26 +524,28 @@ async function loadDashboardData() {
   <div class="frente-bars">
     <div class="bar-row">
       <span class="bar-lbl">Previsto</span>
-      <div class="bar-track"><div class="bar-fill bar-prev" style="width:${Math.min(prev,100)}%"></div></div>
+      <div class="bar-track"><div class="bar-fill bar-prev" style="width:${Math.min(Math.max(prev,0),100)}%"></div></div>
       <span class="bar-pct pct-blue">${prev}%</span>
     </div>
     <div class="bar-row">
       <span class="bar-lbl">Realizado</span>
-      <div class="bar-track"><div class="bar-fill bar-real-green" style="width:${Math.min(realp,100)}%"></div></div>
+      <div class="bar-track"><div class="bar-fill bar-real-green" style="width:${Math.min(Math.max(realp,0),100)}%"></div></div>
       <span class="bar-pct pct-green">${realp}%</span>
     </div>
   </div>
 </div>`;
       }).join('');
+    } else {
+      fl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px">Nenhuma frente encontrada na planilha.</div>';
     }
 
     // --- Avanços ---
+    const al = document.getElementById('av-list');
     if (d.avancos && d.avancos.length) {
-      const al = document.getElementById('av-list');
       al.innerHTML = d.avancos.map(av => {
         const st = String(av.status || '').toLowerCase();
         let bCls = 'b ba', bTxt = av.status || 'Em Andamento';
-        if (st.includes('conclu')) { bCls = 'b bg'; bTxt = 'Concluído'; }
+        if (st.includes('conclu'))                       { bCls = 'b bg'; bTxt = 'Concluído'; }
         else if (st.includes('atras') || st.includes('risco')) { bCls = 'b br'; }
         return `<div class="av-card">
   <div class="av-hdr">
@@ -500,12 +555,14 @@ async function loadDashboardData() {
   <div class="av-marco">${av.marco || av.responsavel || ''}</div>
 </div>`;
       }).join('');
+    } else {
+      al.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px">Nenhum avanço registrado na planilha.</div>';
     }
 
     // --- Riscos ---
+    const rl = document.getElementById('risk-list');
     if (d.riscos && d.riscos.length) {
       document.getElementById('risk-count').textContent = d.riscos.length + ' ativo' + (d.riscos.length !== 1 ? 's' : '');
-      const rl = document.getElementById('risk-list');
       rl.innerHTML = d.riscos.map(rk => {
         const cat = String(rk.categoria || '').toUpperCase();
         let cardCls = 'medio', bCls = 'b ba', bTxt = 'MÉDIO';
@@ -522,8 +579,16 @@ async function loadDashboardData() {
   <div class="risk-desc">${rk.responsavel ? 'Resp.: ' + rk.responsavel : ''}</div>
 </div>`;
       }).join('');
+    } else {
+      document.getElementById('risk-count').textContent = '0 ativos';
+      rl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px">Nenhum risco registrado na planilha.</div>';
     }
-  } catch(e) { console.warn('loadDashboardData error:', e); }
+
+  } catch(e) {
+    console.warn('loadDashboardData error:', e);
+    setMetricEmpty();
+    toast('Sem conexão com o servidor. Toque para tentar novamente.');
+  }
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
