@@ -299,27 +299,27 @@
       <div class="metric-grid">
         <div class="mc mc-gray">
           <div class="mc-label">Planejado</div>
-          <div class="mc-val">40%</div>
-          <div class="mc-sub">Meta S14</div>
+          <div class="mc-val" id="m-plan-val">—</div>
+          <div class="mc-sub" id="m-plan-sub">Carregando...</div>
         </div>
         <div class="mc mc-blue">
           <div class="mc-label">Realizado</div>
-          <div class="mc-val">41%</div>
+          <div class="mc-val" id="m-real-val">—</div>
           <div class="mc-sub">Progresso Geral</div>
         </div>
-        <div class="mc mc-green">
+        <div class="mc mc-green" id="mc-var">
           <div class="mc-label">Variação</div>
-          <div class="mc-val">+1%</div>
-          <div class="mc-sub">Acima do Plano</div>
+          <div class="mc-val" id="m-var-val">—</div>
+          <div class="mc-sub" id="m-var-sub">—</div>
         </div>
         <div class="mc mc-muted">
           <div class="mc-label">A Concluir</div>
-          <div class="mc-val">59%</div>
+          <div class="mc-val" id="m-conc-val">—</div>
           <div class="mc-sub">Restante</div>
         </div>
         <div class="mc mc-red mc-wide">
           <div class="mc-label">Riscos</div>
-          <div class="mc-val">4</div>
+          <div class="mc-val" id="m-risk-val">—</div>
           <div class="mc-sub">Riscos Ativos</div>
         </div>
       </div>
@@ -333,265 +333,7 @@
         </div>
       </div>
 
-      <!-- Desenvolvimentos — Atrasado (-5%) -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div>
-            <div class="frente-name">Desenvolvimentos</div>
-                      </div>
-          <span class="frente-delta delta-neg">▼ −5%</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:57%"></div></div>
-            <span class="bar-pct pct-blue">57%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:52%"></div></div>
-            <span class="bar-pct pct-green">52%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Plataforma de Vendas — Adiantado (+11%) -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div>
-            <div class="frente-name">Plataforma de Vendas</div>
-                      </div>
-          <span class="frente-delta delta-pos">▲ +11%</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:27%"></div></div>
-            <span class="bar-pct pct-blue">27%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:38%"></div></div>
-            <span class="bar-pct pct-green">38%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Infraestrutura — Em dia -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div>
-            <div class="frente-name">Infraestrutura</div>
-                      </div>
-          <span class="frente-delta delta-ok">Em Dia</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:57%"></div></div>
-            <span class="bar-pct pct-blue">57%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:57%"></div></div>
-            <span class="bar-pct pct-green">57%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Perfil de Acesso — Em dia -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div>
-            <div class="frente-name">Perfil de Acesso</div>
-                      </div>
-          <span class="frente-delta delta-ok">Em Dia</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:59%"></div></div>
-            <span class="bar-pct pct-blue">59%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:59%"></div></div>
-            <span class="bar-pct pct-green">59%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Migração de Dados ERP — Em dia -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div>
-            <div class="frente-name">Migração de Dados ERP</div>
-                      </div>
-          <span class="frente-delta delta-ok">Em Dia</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:57%"></div></div>
-            <span class="bar-pct pct-blue">57%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:57%"></div></div>
-            <span class="bar-pct pct-green">57%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Parametrização — Em dia -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div>
-            <div class="frente-name">Parametrização</div>
-                      </div>
-          <span class="frente-delta delta-ok">Em Dia</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:88%"></div></div>
-            <span class="bar-pct pct-blue">88%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:88%"></div></div>
-            <span class="bar-pct pct-green">88%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mapeamento GAPs — Concluído -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div>
-            <div class="frente-name">Mapeamento GAPs</div>
-                      </div>
-          <span class="frente-delta delta-concluido">Concluído</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:100%"></div></div>
-            <span class="bar-pct pct-blue">100%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:100%"></div></div>
-            <span class="bar-pct pct-green">100%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- BI — Em dia -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div>
-            <div class="frente-name">BI</div>
-                      </div>
-          <span class="frente-delta delta-ok">Em Dia</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:33%"></div></div>
-            <span class="bar-pct pct-blue">33%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:33%"></div></div>
-            <span class="bar-pct pct-green">33%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Gestão de Mudança — Em dia -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div>
-            <div class="frente-name">Gestão de Mudança</div>
-                      </div>
-          <span class="frente-delta delta-ok">Em Dia</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:31%"></div></div>
-            <span class="bar-pct pct-blue">31%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:31%"></div></div>
-            <span class="bar-pct pct-green">31%</span>
-          </div>
-        </div>
-      </div>
-
-    
-
-      <!-- Testes Integrados — Não Iniciado -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div><div class="frente-name">Testes Integrados</div></div>
-          <span class="frente-delta" style="background:#F1F5F9;color:#64748B">Não Iniciado</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:0%"></div></div>
-            <span class="bar-pct pct-blue">0%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:0%"></div></div>
-            <span class="bar-pct pct-green">0%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Conversão — Não Iniciado -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div><div class="frente-name">Conversão</div></div>
-          <span class="frente-delta" style="background:#F1F5F9;color:#64748B">Não Iniciado</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:0%"></div></div>
-            <span class="bar-pct pct-blue">0%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:0%"></div></div>
-            <span class="bar-pct pct-green">0%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Torre de Controle — Não Iniciado -->
-      <div class="frente-card">
-        <div class="frente-top">
-          <div><div class="frente-name">Torre de Controle</div></div>
-          <span class="frente-delta" style="background:#F1F5F9;color:#64748B">Não Iniciado</span>
-        </div>
-        <div class="frente-bars">
-          <div class="bar-row">
-            <span class="bar-lbl">Previsto</span>
-            <div class="bar-track"><div class="bar-fill bar-prev" style="width:0%"></div></div>
-            <span class="bar-pct pct-blue">0%</span>
-          </div>
-          <div class="bar-row">
-            <span class="bar-lbl">Realizado</span>
-            <div class="bar-track"><div class="bar-fill bar-real-green" style="width:0%"></div></div>
-            <span class="bar-pct pct-green">0%</span>
-          </div>
-        </div>
-      </div>
+      <div id="frente-list"></div>
 
     </div>
 
@@ -599,90 +341,14 @@
     <div class="scr" id="s-avancos">
       <div class="sh" style="margin-bottom:14px"><h2>Avanços do Projeto</h2></div>
 
-      <div class="av-card">
-        <div class="av-hdr">
-          <div><div class="av-name">Desenvolvimentos</div></div>
-          <span class="b ba">Em Andamento</span>
-        </div>
-        <div class="pbar" style="height:7px;margin-bottom:12px"><div class="pfill" style="width:52%;background:var(--green)"></div></div>
-        <div class="av-marco">Atos: 11 de 17 desenvolvimentos concluído</div>
-      </div>
-
-      <div class="av-card">
-        <div class="av-hdr">
-          <div><div class="av-name">Gestão de Mudança</div></div>
-          <span class="b bg">Concluído</span>
-        </div>
-        <div class="pbar" style="height:7px;margin-bottom:12px"><div class="pfill" style="width:100%;background:var(--green)"></div></div>
-        <div class="av-marco">Apresentação da DEMO - Nova Plataforma de Treinamento Digital</div>
-      </div>
-
-      <div class="av-card">
-        <div class="av-hdr">
-          <div><div class="av-name">Migração de Dados ERP</div></div>
-          <span class="b bg">Concluído</span>
-        </div>
-        <div class="pbar" style="height:7px;margin-bottom:12px"><div class="pfill" style="width:100%;background:var(--green)"></div></div>
-        <div class="av-marco">Cargas ambiente Automação 30/30</div>
-      </div>
-
-      <div class="av-card">
-        <div class="av-hdr">
-          <div><div class="av-name">Perfil de Acesso</div></div>
-          <span class="b bg">Concluído</span>
-        </div>
-        <div class="pbar" style="height:7px;margin-bottom:12px"><div class="pfill" style="width:100%;background:var(--green)"></div></div>
-        <div class="av-marco">Filiais das 2 primeiras viradas cadastradas em produção</div>
-      </div>
+      <div id="av-list"></div>
     </div>
 
     <!-- RISCOS -->
     <div class="scr" id="s-riscos">
-      <div class="sh" style="margin-bottom:14px"><h2>Riscos & Atenção</h2><span class="b br">4 ativos</span></div>
+      <div class="sh" style="margin-bottom:14px"><h2>Riscos & Atenção</h2><span class="b br" id="risk-count">0 ativos</span></div>
 
-      <div class="risk-card alto">
-        <div class="risk-top">
-          <div>
-            <div class="risk-frente">Desenvolvimentos</div>
-            <div class="risk-title">Atrasos no Sprint 01</div>
-          </div>
-          <span class="b br">ALTO</span>
-        </div>
-        <div class="risk-desc">Atos: 6 desenvolvimentos em atraso. ETA para finalização será compartilhado em 18/5.<br>Tecnosolve: Sprint01 com 6 Gaps em correção com ETA de homologação em 18/05.</div>
-      </div>
-
-      <div class="risk-card medio">
-        <div class="risk-top">
-          <div>
-            <div class="risk-frente">Migração de Dados</div>
-            <div class="risk-title">Cadastros Duplicados — Produtos / EAN</div>
-          </div>
-          <span class="b ba">MÉDIO</span>
-        </div>
-        <div class="risk-desc">Saneamento de cadastros duplicados: Produtos | EAN. Base Menil tem duplicidades gerando complexidade na avaliação do status do produto.</div>
-      </div>
-
-      <div class="risk-card medio">
-        <div class="risk-top">
-          <div>
-            <div class="risk-frente">Infraestrutura</div>
-            <div class="risk-title">Preparação Nova Plataforma de Vendas</div>
-          </div>
-          <span class="b ba">MÉDIO</span>
-        </div>
-        <div class="risk-desc">Infraestrutura para receber a nova plataforma de vendas.</div>
-      </div>
-
-      <div class="risk-card baixo">
-        <div class="risk-top">
-          <div>
-            <div class="risk-frente">Gestão de Mudanças</div>
-            <div class="risk-title">Prazo Material de Treinamento</div>
-          </div>
-          <span class="b bb">BAIXO</span>
-        </div>
-        <div class="risk-desc">Prazos curtos para construção dos novos materiais de treinamento: Tela de Vendas · Caixa · CRM Salesforce.</div>
-      </div>
+      <div id="risk-list"></div>
     </div>
   </div>
   <nav class="nav">
@@ -755,8 +421,109 @@ function ok(u) { sessionStorage.setItem('fb_u', u); document.getElementById('log
 
 function boot(u) {
   document.getElementById('app').style.display = 'flex';
-  
   go('dash');
+  loadDashboardData();
+}
+
+async function loadDashboardData() {
+  const token = sessionStorage.getItem('fb_token');
+  if (!token) return;
+  try {
+    const r = await fetch(`${API}/api/data/current`, {
+      headers: { 'Authorization': 'Bearer ' + token }, mode: 'cors'
+    });
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.empty) return;
+
+    // --- Métricas ---
+    const plan = Math.round(d.planejado || 0);
+    const real = Math.round(d.realizado || 0);
+    const dev  = Math.round(d.desvio   || 0);
+    document.getElementById('m-plan-val').textContent = plan + '%';
+    document.getElementById('m-plan-sub').textContent = 'Meta ' + (d.semana || 'S14');
+    document.getElementById('m-real-val').textContent = real + '%';
+    document.getElementById('m-var-val').textContent  = (dev >= 0 ? '+' : '') + dev + '%';
+    document.getElementById('m-var-sub').textContent  = dev >= 0 ? 'Acima do Plano' : 'Abaixo do Plano';
+    document.getElementById('mc-var').className       = 'mc ' + (dev >= 0 ? 'mc-green' : 'mc-red');
+    document.getElementById('m-conc-val').textContent = Math.round(100 - real) + '%';
+    const risks = d.riscos ? d.riscos.length : (d.kpis && d.kpis['Riscos Ativos'] != null ? d.kpis['Riscos Ativos'] : 0);
+    document.getElementById('m-risk-val').textContent = risks;
+
+    // --- Frentes (áreas) ---
+    if (d.areas && d.areas.length) {
+      const fl = document.getElementById('frente-list');
+      fl.innerHTML = d.areas.map(a => {
+        const realp   = Math.round(a.realizado || 0);
+        const prev    = Math.round((a.realizado || 0) - (a.desvio || 0));
+        const delta   = Math.round(a.desvio || 0);
+        let badgeCls, badgeTxt;
+        if (realp >= 100)        { badgeCls = 'delta-concluido'; badgeTxt = 'Concluído'; }
+        else if (delta > 0)      { badgeCls = 'delta-pos';       badgeTxt = '▲ +' + delta + '%'; }
+        else if (delta < 0)      { badgeCls = 'delta-neg';       badgeTxt = '▼ ' + delta + '%'; }
+        else if (realp === 0)    { badgeCls = '';                 badgeTxt = 'Não Iniciado'; }
+        else                     { badgeCls = 'delta-ok';        badgeTxt = 'Em Dia'; }
+        return `<div class="frente-card">
+  <div class="frente-top">
+    <div><div class="frente-name">${a.nome}</div></div>
+    <span class="frente-delta ${badgeCls}">${badgeTxt}</span>
+  </div>
+  <div class="frente-bars">
+    <div class="bar-row">
+      <span class="bar-lbl">Previsto</span>
+      <div class="bar-track"><div class="bar-fill bar-prev" style="width:${Math.min(prev,100)}%"></div></div>
+      <span class="bar-pct pct-blue">${prev}%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-lbl">Realizado</span>
+      <div class="bar-track"><div class="bar-fill bar-real-green" style="width:${Math.min(realp,100)}%"></div></div>
+      <span class="bar-pct pct-green">${realp}%</span>
+    </div>
+  </div>
+</div>`;
+      }).join('');
+    }
+
+    // --- Avanços ---
+    if (d.avancos && d.avancos.length) {
+      const al = document.getElementById('av-list');
+      al.innerHTML = d.avancos.map(av => {
+        const st = String(av.status || '').toLowerCase();
+        let bCls = 'b ba', bTxt = av.status || 'Em Andamento';
+        if (st.includes('conclu')) { bCls = 'b bg'; bTxt = 'Concluído'; }
+        else if (st.includes('atras') || st.includes('risco')) { bCls = 'b br'; }
+        return `<div class="av-card">
+  <div class="av-hdr">
+    <div><div class="av-name">${av.frente || av.item || '—'}</div></div>
+    <span class="${bCls}">${bTxt}</span>
+  </div>
+  <div class="av-marco">${av.marco || av.responsavel || ''}</div>
+</div>`;
+      }).join('');
+    }
+
+    // --- Riscos ---
+    if (d.riscos && d.riscos.length) {
+      document.getElementById('risk-count').textContent = d.riscos.length + ' ativo' + (d.riscos.length !== 1 ? 's' : '');
+      const rl = document.getElementById('risk-list');
+      rl.innerHTML = d.riscos.map(rk => {
+        const cat = String(rk.categoria || '').toUpperCase();
+        let cardCls = 'medio', bCls = 'b ba', bTxt = 'MÉDIO';
+        if (cat.includes('ALTO')) { cardCls = 'alto';  bCls = 'b br'; bTxt = 'ALTO'; }
+        if (cat.includes('BAIX')) { cardCls = 'baixo'; bCls = 'b bb'; bTxt = 'BAIXO'; }
+        return `<div class="risk-card ${cardCls}">
+  <div class="risk-top">
+    <div>
+      <div class="risk-frente">${rk.frente || ''}</div>
+      <div class="risk-title">${rk.risco || ''}</div>
+    </div>
+    <span class="${bCls}">${bTxt}</span>
+  </div>
+  <div class="risk-desc">${rk.responsavel ? 'Resp.: ' + rk.responsavel : ''}</div>
+</div>`;
+      }).join('');
+    }
+  } catch(e) { console.warn('loadDashboardData error:', e); }
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
@@ -785,9 +552,7 @@ function toast(m) {
 }
 
 // Refresh live data every 5 min
-setInterval(async () => {
-  try { await fetch(API, { credentials:'include', mode:'cors' }); } catch(e) {}
-}, 300000);
+setInterval(() => { loadDashboardData(); }, 300000);
 </script>
 </body>
 </html>
