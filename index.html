@@ -572,19 +572,13 @@ async function loadDashboardData() {
     if (d.riscos && d.riscos.length) {
       document.getElementById('risk-count').textContent = d.riscos.length + ' ativo' + (d.riscos.length !== 1 ? 's' : '');
       rl.innerHTML = d.riscos.map(rk => {
-        const cat = String(rk.categoria || '').toUpperCase();
-        let cardCls = 'medio', bCls = 'b ba', bTxt = 'MÉDIO';
-        if (cat.includes('ALTO')) { cardCls = 'alto';  bCls = 'b br'; bTxt = 'ALTO'; }
-        if (cat.includes('BAIX')) { cardCls = 'baixo'; bCls = 'b bb'; bTxt = 'BAIXO'; }
-        return `<div class="risk-card ${cardCls}">
+        return `<div class="risk-card medio">
   <div class="risk-top">
     <div>
       <div class="risk-frente">${rk.frente || ''}</div>
       <div class="risk-title">${rk.risco || ''}</div>
     </div>
-    <span class="${bCls}">${bTxt}</span>
   </div>
-  <div class="risk-desc"></div>
 </div>`;
       }).join('');
     } else {
