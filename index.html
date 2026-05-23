@@ -413,6 +413,7 @@ async function login() {
     const data = await r.json();
     if (r.ok && data.accessToken) {
       sessionStorage.setItem('fb_token', data.accessToken);
+      if (data.user) sessionStorage.setItem('fb_user', JSON.stringify(data.user));
       ok(data.user?.username || u);
       return;
     }
@@ -430,6 +431,7 @@ function ok(u) { sessionStorage.setItem('fb_u', u); document.getElementById('log
 function forceLogin() {
   sessionStorage.removeItem('fb_u');
   sessionStorage.removeItem('fb_token');
+  sessionStorage.removeItem('fb_user');
   document.getElementById('app').style.display   = 'none';
   document.getElementById('login').style.display = 'flex';
   document.getElementById('u').value = '';

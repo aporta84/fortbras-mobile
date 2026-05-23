@@ -1,4 +1,4 @@
-const CACHE = 'fortbras-pmo-v7';
+const CACHE = 'fortbras-pmo-v8';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/logo.png'];
 
 self.addEventListener('install', e => {
